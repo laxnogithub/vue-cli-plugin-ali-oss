@@ -4,10 +4,11 @@
  * @Author: lax
  * @Date: 2021-01-03 12:57:37
  * @LastEditors: lax
- * @LastEditTime: 2021-01-03 12:58:59
+ * @LastEditTime: 2021-01-03 13:56:04
  * @FilePath: \vue-cli-plugin-ali-oss\packages\options.js
  */
 module.exports = {
-	timeout: 15,
+	timeout: 15 * 1000,
 	secure: true,
+	region: "oss-cn-hangzhou",
 };

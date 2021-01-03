@@ -6,7 +6,7 @@
  * @Author: lax
  * @Date: 2020-09-14 16:58:38
  * @LastEditors: lax
- * @LastEditTime: 2021-01-03 13:46:03
+ * @LastEditTime: 2021-01-03 14:00:51
  */
 const options = require("./options.js");
 const path = require("path");
@@ -14,7 +14,7 @@ const Oss = require("ali-oss");
 let client;
 const Chalk = require("chalk");
 const consola = require("consola");
-const log = consola;
+const log = consola.log;
 const { RawSource } = require("webpack-sources");
 
 const DEFAULT_REG = /[\s\S]*/;
