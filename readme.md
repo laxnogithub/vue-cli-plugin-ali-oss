@@ -4,7 +4,7 @@
  * @Author: lax
  * @Date: 2020-09-16 11:51:36
  * @LastEditors: lax
- * @LastEditTime: 2021-01-03 18:40:26
+ * @LastEditTime: 2021-01-03 19:34:34
 -->
 # 简介
 实现阿里云oss打包后自动上传
@@ -109,7 +109,7 @@ use: true/false,
 
 ## reg
 可识别的正则
-默认: /\.(png|jpe?g|bmp|gif|mp4|webm)/i
+默认: /\.(png|jpe?g|bmp|gif|mp4|webm|mp3)/i
 ```
 reg: XXXX
 ```
