@@ -4,28 +4,19 @@
  * @Author: lax
  * @Date: 2020-04-01 12:54:53
  * @LastEditors: lax
- * @LastEditTime: 2021-01-03 13:13:08
+ * @LastEditTime: 2021-01-03 18:32:15
  */
 const aliOssPlugin = require("./packages/index.js");
+const json = require("./package.json");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const path = require("path");
 module.exports = {
-	/* ##################################
-	 * test view path for the local debug
-	 * ##################################
-	 */
-	pages: {
-		index: {
-			entry: "./examples/main.js",
-			template: "./public/index.html",
-			filename: "index.html",
-		},
-	},
 	/* ##################################
 	 * js css version like: xx.js?v=xxxxx
 	 * ##################################
 	 */
 	configureWebpack: (config) => {
+		const pro = config.mode === "production";
 		config.devtool = "source-map";
 		// plugin
 		const plugins = [
@@ -39,7 +30,7 @@ module.exports = {
 			filename: "js/[name].js?v=[hash:6]",
 			chunkFilename: "js/[name].js?v=[hash:6]",
 		};
-		if (config.mode === "production") plugins.push(new aliOssPlugin());
+		if (pro) plugins.push(new aliOssPlugin());
 
 		return { output, plugins };
 	},
@@ -56,18 +47,33 @@ module.exports = {
 	 * like: content.png?v=s2421a
 	 */
 	chainWebpack: (config) => {
-		config.module
-			.rule("js")
-			.include.add("/packages/")
-			.end()
-			.use("babel")
-			.loader("babel-loader");
+		const pro = config.store.get("mode") === "production";
+		// config.module
+		// 	.rule("js")
+		// 	.include.add("/packages/")
+		// 	.end()
+		// 	.use("babel")
+		// 	.loader("babel-loader");
 		config.module
 			.rule("images")
 			.use("url-loader")
 			.loader("file-loader")
 			.options({
-				name: "img/[name].[ext]?v=[hash:6]",
+				publicPath: pro
+					? aliOssPlugin.getPrefix(require("./oss.js"), json.name)
+					: "./",
+				name: "[folder]/[name].[ext]?v=[hash:6]",
+			});
+		const mediaRule = config.module.rule("media");
+		mediaRule.uses.clear();
+		mediaRule
+			.use("url-loader")
+			.loader("file-loader")
+			.options({
+				publicPath: pro
+					? aliOssPlugin.getPrefix(require("./oss.js"), json.name)
+					: "./",
+				name: "[folder]/[name].[ext]?v=[hash:6]",
 				useRelativePath: true,
 			});
 		/* ##################################
@@ -76,6 +82,6 @@ module.exports = {
 		 */
 		config.resolve.alias
 			.set("@", path.join(__dirname, "./packages"))
-			.set("@ex", path.join(__dirname, "./examples"));
+			.set("@ex", path.join(__dirname, "./src"));
 	},
 };

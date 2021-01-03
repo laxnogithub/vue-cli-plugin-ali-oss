@@ -1,29 +1,28 @@
 /*
- * @Description:
- * tinypng: https://tinypng.com/developers/reference/nodejs
- * webpack: https://webpack.js.org/api/compilation-object/#getassets
+ * @Description: auto upload oss
+ * webpack: https://webpack.js.org/api/compilation-object/
  * @Version: 1.0.0
  * @Author: lax
  * @Date: 2020-09-14 16:58:38
  * @LastEditors: lax
- * @LastEditTime: 2021-01-03 14:00:51
+ * @LastEditTime: 2021-01-03 17:53:26
  */
-const options = require("./options.js");
 const path = require("path");
+const consola = require("consola");
+const options = require(path.join(__dirname, "./options.js"));
 const Oss = require("ali-oss");
 let client;
-const Chalk = require("chalk");
-const consola = require("consola");
-const log = consola.log;
-const { RawSource } = require("webpack-sources");
+const MSG = require(path.join(__dirname, "./message.js"));
 
-const DEFAULT_REG = /[\s\S]*/;
+const DEFAULT_REG = /\.(png|jpe?g|bmp|gif|mp4|webm)/i;
 class AliOss {
 	constructor(p = {}) {
 		this.p = p;
-		// img:png/jpg/jpeg/bmp/gif
+		// reduce assets type
 		this.REG = p.reg || DEFAULT_REG;
+		// this plugin can be run
 		this.use = p.use !== undefined ? p.use : true;
+		//  plugin name
 		this.name = "TaoAliOssPlugin";
 	}
 	apply(compiler) {
@@ -38,16 +37,18 @@ class AliOss {
 		}
 		compiler.hooks.afterEmit.tapAsync(this.name, (compilation, callback) => {
 			// get all assets
-			const assets = compilation.getAssets();
-			// img list by reg
-			const imgs = assets.filter((asset) => this.REG.test(asset.name));
+			const baseAssets = compilation.getAssets();
+			// assets list by reg
+			baseAssets.map((obj) => {
+				console.log(obj.name);
+			});
+			const assets = baseAssets.filter((asset) => this.REG.test(asset.name));
 			// skip it when can`t find assets
-			if (!imgs.length) callback();
+			if (!assets.length) callback();
 			// img promise
-			const promises = imgs.map(async (img) => {
-				// compressed by tinypng
-				await this.oss(img);
-				// update asset in webpack
+			const promises = assets.map(async (asset) => {
+				// upload oss
+				await this.oss(asset);
 				return Promise.resolve();
 			});
 			return Promise.all(promises).then(() => {
@@ -57,36 +58,26 @@ class AliOss {
 		});
 	}
 	async oss(asset) {
+		const { fullName } = this.getName(asset.name);
 		try {
-			if (await this.checkFileExist(asset.name))
-				await this.deleteFile(asset.name);
-			console.log(asset);
-			const result = await client.put(asset.name, asset.path);
-		} catch (error) {}
-	}
-	async checkFileExist(name) {
-		try {
-			await client.head(name);
-			return true;
+			await client.put(fullName, asset.source._value);
+			MSG.EACH_MSG(asset.name, true);
 		} catch (error) {
-			if (error.code === "NoSuchKey") {
-				return false;
-			}
+			MSG.EACH_MSG(asset.name, false);
 		}
 	}
-	async deleteFile(name) {
-		try {
-			let result = await client.delete(name);
-			return true;
-		} catch (error) {
-			return false;
-		}
+	_getPackage(comp) {
+		const json = require(path.join(comp.context, "./package.json"));
+		this.json = json;
 	}
 	_getOptions(comp) {
 		const op = Object.assign(
 			{},
+			// default options
 			options,
+			// new (options)
 			this.p,
+			// file options
 			this._getOptionsFromFile(comp)
 		);
 		this.options = op;
@@ -97,11 +88,7 @@ class AliOss {
 		try {
 			options = require(path.join(comp.context, "./oss.js"));
 		} catch (error) {
-			log("");
-			log(Chalk.redBright("############################################"));
-			log(Chalk.redBright("can`t find options in oss.js"));
-			log(Chalk.redBright("skip this plugin..."));
-			log(Chalk.redBright("############################################"));
+			MSG.FILE_ERROR_MSG();
 			throw error;
 		}
 		return options;
@@ -110,34 +97,53 @@ class AliOss {
 		try {
 			client = new Oss(this.options);
 		} catch (error) {
-			log("");
-			log(Chalk.redBright("############################################"));
-			log(Chalk.redBright("can`t generate oss client"));
-			log(Chalk.redBright("skip this plugin..."));
-			log(Chalk.redBright("############################################"));
+			MSG.CLIENT_ERROR_MSG();
 			throw error;
 		}
 	}
 	_init(c) {
+		this._getPackage(c);
 		this._getOptions(c);
 		this._generateClient();
-		log("");
-		log(Chalk.greenBright("##############################################"));
-		log(Chalk.greenBright("######### ali-oss-plugin start... ##########"));
-		log(Chalk.greenBright("##############################################"));
+		MSG.START_MSG();
 		return true;
 	}
 	_end() {
-		log("");
-		log(Chalk.greenBright("##############################################"));
-		log(Chalk.greenBright("## success: all imgs compressed by tinypng! ##"));
-		log(Chalk.greenBright("##############################################"));
-		log(Chalk.greenBright("* this key compressd count:" + this.getTinyCount()));
+		MSG.END_MSG();
 	}
-	_each(name, is) {
-		log("");
-		if (is) log(Chalk.greenBright("* filename: " + name + " compressed!"));
-		if (!is) log(Chalk.redBright("* filename: " + name + " not compressed!"));
+	getName(name) {
+		// clean ? #
+		const base = name.split("?")[0].split("#")[0];
+		const nameList = base.split("/");
+		// file name
+		const fname = nameList[nameList.length - 1];
+		// file path
+		const path = base.split(fname)[0];
+		// prefix
+		let prefix = this.options.prefix;
+		prefix = prefix && prefix !== "" ? prefix + "/" : "";
+		// projectPath
+		const projectPath = this.options.projectName ? this.json.name : "";
+		// full path
+		return {
+			path: prefix + projectPath + "/" + path,
+			name: fname,
+			fullName: prefix + projectPath + "/" + path + fname,
+		};
 	}
 }
+
+function getPrefix(op, pro) {
+	const http = "http" + (op.secure && op.secure == false ? "" : "s") + "://";
+	const bucket = op.bucket;
+	const region = op.region ? op.region : "oss-cn-hangzhou";
+	const prefix = op.prefix && op.prefix !== "" ? op.prefix + "/" : "";
+	const proName = op.projectName ? pro : "";
+	const diy = http + bucket + "." + region + ".aliyuncs.com/";
+	const path = op.endpoint ? op.endpoint : diy;
+	const fullPath = path + prefix + proName;
+	return fullPath;
+}
+
+AliOss.getPrefix = getPrefix;
 module.exports = AliOss;
