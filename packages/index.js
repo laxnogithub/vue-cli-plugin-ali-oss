@@ -5,7 +5,7 @@
  * @Author: lax
  * @Date: 2020-09-14 16:58:38
  * @LastEditors: lax
- * @LastEditTime: 2021-01-03 17:53:26
+ * @LastEditTime: 2021-01-03 18:59:39
  */
 const path = require("path");
 const consola = require("consola");
@@ -132,18 +132,4 @@ class AliOss {
 		};
 	}
 }
-
-function getPrefix(op, pro) {
-	const http = "http" + (op.secure && op.secure == false ? "" : "s") + "://";
-	const bucket = op.bucket;
-	const region = op.region ? op.region : "oss-cn-hangzhou";
-	const prefix = op.prefix && op.prefix !== "" ? op.prefix + "/" : "";
-	const proName = op.projectName ? pro : "";
-	const diy = http + bucket + "." + region + ".aliyuncs.com/";
-	const path = op.endpoint ? op.endpoint : diy;
-	const fullPath = path + prefix + proName;
-	return fullPath;
-}
-
-AliOss.getPrefix = getPrefix;
 module.exports = AliOss;
