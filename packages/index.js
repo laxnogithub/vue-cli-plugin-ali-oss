@@ -5,7 +5,7 @@
  * @Author: lax
  * @Date: 2020-09-14 16:58:38
  * @LastEditors: lax
- * @LastEditTime: 2021-01-03 18:59:39
+ * @LastEditTime: 2021-01-03 19:09:09
  */
 const path = require("path");
 const consola = require("consola");
@@ -13,6 +13,7 @@ const options = require(path.join(__dirname, "./options.js"));
 const Oss = require("ali-oss");
 let client;
 const MSG = require(path.join(__dirname, "./message.js"));
+const getPrefix = require(path.join(__dirname, "./getPrefix"));
 
 const DEFAULT_REG = /\.(png|jpe?g|bmp|gif|mp4|webm)/i;
 class AliOss {
@@ -132,4 +133,6 @@ class AliOss {
 		};
 	}
 }
+
+AliOss.getPrefix = getPrefix;
 module.exports = AliOss;
