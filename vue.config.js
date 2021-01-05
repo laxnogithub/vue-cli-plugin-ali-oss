@@ -4,7 +4,7 @@
  * @Author: lax
  * @Date: 2020-04-01 12:54:53
  * @LastEditors: lax
- * @LastEditTime: 2021-01-03 18:32:15
+ * @LastEditTime: 2021-01-06 00:34:14
  */
 const aliOssPlugin = require("./packages/index.js");
 const json = require("./package.json");
@@ -30,13 +30,17 @@ module.exports = {
 			filename: "js/[name].js?v=[hash:6]",
 			chunkFilename: "js/[name].js?v=[hash:6]",
 		};
-		if (pro) plugins.push(new aliOssPlugin());
+		if (pro)
+			plugins.push(
+				new aliOssPlugin({ reg: /\.(png|jpe?g|bmp|gif|mp4|webm|mp3|js)/i })
+			);
 
 		return { output, plugins };
 	},
-	/* 设置build的引用文件路径 */
 
-	publicPath: "./",
+	/* 设置build的引用文件路径 */
+	publicPath: aliOssPlugin.getPrefix(require("./oss.js"), json.name),
+
 	/* 生产环境sourcemap 清除 */
 	productionSourceMap: false,
 	/* 取消文件名hash值 */

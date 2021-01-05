@@ -5,7 +5,7 @@
  * @Author: lax
  * @Date: 2020-09-14 16:58:38
  * @LastEditors: lax
- * @LastEditTime: 2021-01-03 19:34:16
+ * @LastEditTime: 2021-01-06 00:42:01
  */
 const path = require("path");
 const consola = require("consola");
@@ -15,7 +15,7 @@ let client;
 const MSG = require(path.join(__dirname, "./message.js"));
 const getPrefix = require(path.join(__dirname, "./getPrefix"));
 
-const DEFAULT_REG = /\.(png|jpe?g|bmp|gif|mp4|webm|mp3)/i;
+const DEFAULT_REG = /\.(png|jpe?g|bmp|gif|mp4|webm|mp3|js)/i;
 class AliOss {
 	constructor(p = {}) {
 		this.p = p;
@@ -65,6 +65,7 @@ class AliOss {
 			MSG.EACH_MSG(asset.name, true);
 		} catch (error) {
 			MSG.EACH_MSG(asset.name, false);
+			console.log(error.message);
 		}
 	}
 	_getPackage(comp) {
