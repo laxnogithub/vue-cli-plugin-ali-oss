@@ -5,7 +5,7 @@
  * @Author: lax
  * @Date: 2020-09-14 16:58:38
  * @LastEditors: lax
- * @LastEditTime: 2021-01-06 00:42:01
+ * @LastEditTime: 2021-01-07 19:56:12
  */
 const path = require("path");
 const consola = require("consola");
@@ -61,11 +61,10 @@ class AliOss {
 	async oss(asset) {
 		const { fullName } = this.getName(asset.name);
 		try {
-			await client.put(fullName, asset.source._value);
+			await client.put(fullName, Buffer.from(asset.source.source()));
 			MSG.EACH_MSG(asset.name, true);
 		} catch (error) {
 			MSG.EACH_MSG(asset.name, false);
-			console.log(error.message);
 		}
 	}
 	_getPackage(comp) {
