@@ -4,7 +4,7 @@
  * @Author: lax
  * @Date: 2020-04-01 12:54:53
  * @LastEditors: lax
- * @LastEditTime: 2021-01-06 00:34:14
+ * @LastEditTime: 2021-01-07 20:41:55
  */
 const aliOssPlugin = require("./packages/index.js");
 const json = require("./package.json");
@@ -30,10 +30,7 @@ module.exports = {
 			filename: "js/[name].js?v=[hash:6]",
 			chunkFilename: "js/[name].js?v=[hash:6]",
 		};
-		if (pro)
-			plugins.push(
-				new aliOssPlugin({ reg: /\.(png|jpe?g|bmp|gif|mp4|webm|mp3|js)/i })
-			);
+		if (pro) plugins.push(new aliOssPlugin());
 
 		return { output, plugins };
 	},
