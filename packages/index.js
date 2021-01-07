@@ -5,7 +5,7 @@
  * @Author: lax
  * @Date: 2020-09-14 16:58:38
  * @LastEditors: lax
- * @LastEditTime: 2021-01-07 20:01:26
+ * @LastEditTime: 2021-01-07 20:02:58
  */
 const path = require("path");
 const consola = require("consola");
@@ -40,9 +40,6 @@ class AliOss {
 			// get all assets
 			const baseAssets = compilation.getAssets();
 			// assets list by reg
-			baseAssets.map((obj) => {
-				console.log(obj.name);
-			});
 			const assets = baseAssets.filter((asset) => this.REG.test(asset.name));
 			// skip it when can`t find assets
 			if (!assets.length) callback();
