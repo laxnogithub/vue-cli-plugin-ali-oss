@@ -1,6 +1,6 @@
 {
   "name": "tao-webpack-ali-oss",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "private": false,
   "description": "upload ali oss for webpack or vue",
   "main": "./packages/index.js",
