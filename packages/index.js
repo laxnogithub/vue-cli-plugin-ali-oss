@@ -5,11 +5,12 @@
  * @Author: lax
  * @Date: 2020-09-14 16:58:38
  * @LastEditors: lax
- * @LastEditTime: 2022-01-30 14:31:18
+ * @LastEditTime: 2022-01-30 15:49:16
  */
 const path = require("path");
 const consola = require("consola");
 const options = require(path.join(__dirname, "./options.js"));
+const PLUGIN_NAME = "aliOssPlugin";
 const Oss = require("ali-oss");
 let client;
 const MSG = require(path.join(__dirname, "./message.js"));
@@ -23,8 +24,10 @@ class AliOss {
 		this.REG = p.reg || DEFAULT_REG;
 		// this plugin can be run
 		this.use = p.use !== undefined ? p.use : true;
+		// ali oss config
+		this.config = p.config || {};
 		//  plugin name
-		this.name = "aliOssPlugin";
+		this.name = PLUGIN_NAME;
 	}
 	apply(compiler) {
 		// options.use = false
@@ -40,7 +43,7 @@ class AliOss {
 			const assets = this.getAssets(compilation);
 			// skip it when can`t find assets
 			if (!assets.length) callback();
-			
+
 			// img promise
 			const promises = assets.map(async (asset) => {
 				// upload oss
@@ -81,7 +84,7 @@ class AliOss {
 			// default options
 			options,
 			// new (options)
-			this.p,
+			this.p.config,
 			// file options
 			this._getOptionsFromFile(comp)
 		);
