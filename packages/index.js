@@ -5,7 +5,7 @@
  * @Author: lax
  * @Date: 2020-09-14 16:58:38
  * @LastEditors: lax
- * @LastEditTime: 2022-01-30 13:05:22
+ * @LastEditTime: 2022-01-30 14:31:18
  */
 const path = require("path");
 const consola = require("consola");
@@ -24,7 +24,7 @@ class AliOss {
 		// this plugin can be run
 		this.use = p.use !== undefined ? p.use : true;
 		//  plugin name
-		this.name = "TaoAliOssPlugin";
+		this.name = "aliOssPlugin";
 	}
 	apply(compiler) {
 		// options.use = false
