@@ -5,7 +5,7 @@
  * @Author: lax
  * @Date: 2020-09-14 16:58:38
  * @LastEditors: lax
- * @LastEditTime: 2021-01-07 20:42:19
+ * @LastEditTime: 2022-01-30 13:05:22
  */
 const path = require("path");
 const consola = require("consola");
@@ -37,12 +37,10 @@ class AliOss {
 			return;
 		}
 		compiler.hooks.afterEmit.tapAsync(this.name, (compilation, callback) => {
-			// get all assets
-			const baseAssets = compilation.getAssets();
-			// assets list by reg
-			const assets = baseAssets.filter((asset) => this.REG.test(asset.name));
+			const assets = this.getAssets(compilation);
 			// skip it when can`t find assets
 			if (!assets.length) callback();
+			
 			// img promise
 			const promises = assets.map(async (asset) => {
 				// upload oss
@@ -63,6 +61,15 @@ class AliOss {
 		} catch (error) {
 			MSG.EACH_MSG(asset.name, false);
 		}
+	}
+	getAssets(compilation) {
+		// get all assets
+		const _assets = compilation.getAssets();
+		// img list by reg
+		const assets = _assets.filter(
+			(asset) => this.REG.test(asset.name) && asset.source._value !== undefined
+		);
+		return assets;
 	}
 	_getPackage(comp) {
 		const json = require(path.join(comp.context, "./package.json"));

@@ -1,5 +1,5 @@
 {
-  "name": "tao-webpack-ali-oss",
+  "name": "vue-cli-plugin-ali-oss",
   "version": "1.0.3",
   "private": false,
   "description": "upload ali oss for webpack or vue",
@@ -11,7 +11,7 @@
   },
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "rm -rf dist && vue-cli-service build",
+    "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
     "lint": "vue-cli-service lint"
@@ -71,6 +71,7 @@
     "ali",
     "assets",
     "plugin",
-    "assets"
+    "alioss",
+    "upload"
   ]
 }
