@@ -5,13 +5,14 @@
  * @Author: lax
  * @Date: 2020-09-14 16:58:38
  * @LastEditors: lax
- * @LastEditTime: 2022-01-30 15:49:16
+ * @LastEditTime: 2022-06-05 11:42:17
  */
 const path = require("path");
 const consola = require("consola");
 const options = require(path.join(__dirname, "./options.js"));
 const PLUGIN_NAME = "aliOssPlugin";
 const Oss = require("ali-oss");
+const { RawSource } = require("webpack-sources");
 let client;
 const MSG = require(path.join(__dirname, "./message.js"));
 const getPrefix = require(path.join(__dirname, "./getPrefix"));
@@ -70,7 +71,11 @@ class AliOss {
 		const _assets = compilation.getAssets();
 		// img list by reg
 		const assets = _assets.filter(
-			(asset) => this.REG.test(asset.name) && asset.source._value !== undefined
+			(asset) =>
+				this.REG.test(asset.name) &&
+				(asset.source instanceof RawSource
+					? asset.source._value !== undefined
+					: true)
 		);
 		return assets;
 	}
@@ -97,7 +102,7 @@ class AliOss {
 			options = require(path.join(comp.context, "./oss.js"));
 		} catch (error) {
 			MSG.FILE_ERROR_MSG();
-			throw error;
+			// throw error;
 		}
 		return options;
 	}

@@ -4,7 +4,7 @@
  * @Author: lax
  * @Date: 2021-01-03 17:17:28
  * @LastEditors: lax
- * @LastEditTime: 2021-01-03 17:24:44
+ * @LastEditTime: 2022-06-05 11:44:20
  * @FilePath: \vue-cli-plugin-ali-oss\packages\message.js
  */
 const Chalk = require("chalk");
@@ -30,10 +30,9 @@ module.exports = {
 	},
 	FILE_ERROR_MSG() {
 		log("");
-		log(Chalk.redBright("############################################"));
-		log(Chalk.redBright("can`t find options in oss.js"));
-		log(Chalk.redBright("skip this plugin..."));
-		log(Chalk.redBright("############################################"));
+		log(Chalk.yellowBright("############################################"));
+		log(Chalk.yellowBright("can`t find options or oss.js not exist, skip.."));
+		log(Chalk.yellowBright("############################################"));
 	},
 	CLIENT_ERROR_MSG() {
 		log("");

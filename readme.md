@@ -4,11 +4,11 @@
  * @Author: lax
  * @Date: 2020-09-16 11:51:36
  * @LastEditors: lax
- * @LastEditTime: 2021-01-03 19:34:34
+ * @LastEditTime: 2022-06-05 11:50:22
 -->
 # 简介
-实现阿里云oss打包后自动上传
-
+* 实现web项目打包后自动上传阿里云oss
+* 搭配自动tinypng图片压缩插件[vue-tinypng-plugin](https://www.npmjs.com/package/vue-tinypng-plugin)效果更佳
 # 使用说明
 
 ## 配置
@@ -29,13 +29,16 @@ module.exports = {
 ```
 
 2.或者在插件初始化写入配置（优先级中）
+* 注意!!! 1.0.3版本之后需要包含在config里
 ```
 new tinypngPlugin({
-    accessKeyId: "xxx",
-	accessKeySecret: "xxx",
-	bucket: "bucket",
-	prefix: "prefix",
-	projectName: true,
+	config:{
+		accessKeyId: "xxx",
+		accessKeySecret: "xxx",
+		bucket: "bucket",
+		prefix: "prefix",
+		projectName: true,
+	}
 })
 ```
 
@@ -48,6 +51,10 @@ configureWebpack: (config) => {
         ]
     }
 }
+```
+# 路径顺序
+```
+https://${bucket}.${region}.aliyuncs.com/${prefix}/${projectName}/XXXX
 ```
 
 # 配置属性

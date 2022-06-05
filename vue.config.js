@@ -4,12 +4,13 @@
  * @Author: lax
  * @Date: 2020-04-01 12:54:53
  * @LastEditors: lax
- * @LastEditTime: 2021-01-07 20:41:55
+ * @LastEditTime: 2022-06-05 11:44:46
  */
 const aliOssPlugin = require("./packages/index.js");
 const json = require("./package.json");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const path = require("path");
+const productionAliOssUpload = /\.(png|jpe?g|bmp|gif|mp4|webm|mp3|js|css|json|ico|txt|ttf|html)/;
 module.exports = {
 	/* ##################################
 	 * js css version like: xx.js?v=xxxxx
@@ -30,7 +31,7 @@ module.exports = {
 			filename: "js/[name].js?v=[hash:6]",
 			chunkFilename: "js/[name].js?v=[hash:6]",
 		};
-		if (pro) plugins.push(new aliOssPlugin());
+		if (pro) plugins.push(new aliOssPlugin({ reg: productionAliOssUpload }));
 
 		return { output, plugins };
 	},
